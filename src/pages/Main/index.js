@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Keyboard, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Container, Form, FieldsForm, Input, SubmitButton, Erro, List, User, Avatar, Name, Bio, ProfileButton, ProfileButtonText } from './styles';
+import { Container, Form, FieldsForm, Input, SubmitButton, Erro, List, User, Avatar, Name, Bio, ContainerActions, DeleteButton, ProfileButton, ProfileButtonText } from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import api from '../../services/api';
-import { set } from 'react-native-reanimated';
 
 const Main = ({ navigation, usersRegistered }) => {
 
@@ -37,6 +36,7 @@ const Main = ({ navigation, usersRegistered }) => {
   }
 
   const handleViewUser = (user) => { navigation.navigate('User', { user }) }
+  const handleDeleteUser = (user) => { setUsers(users.filter(userArr => userArr.login !== user.login)) }
 
   return (
     <Container>
@@ -74,9 +74,14 @@ const Main = ({ navigation, usersRegistered }) => {
             <Avatar source={{ uri: item.avatar }} />
             <Name>{item.name}</Name>
             <Bio>{item.bio}</Bio>
-            <ProfileButton onPress={() => handleViewUser(item)}>
-              <ProfileButtonText>Ver Perfil</ProfileButtonText>
-            </ProfileButton>
+            <ContainerActions>
+              <DeleteButton onPress={() => handleDeleteUser(item)}>
+                <Icon name='delete' size={20} color='#999' />
+              </DeleteButton>
+              <ProfileButton onPress={() => handleViewUser(item)}>
+                <ProfileButtonText>Ver Perfil</ProfileButtonText>
+              </ProfileButton>
+            </ContainerActions>
           </User>
         )}
       />

@@ -18,7 +18,7 @@ const Routes = () => {
     (async () => {
       try {
         const users = await AsyncStorage.getItem('users');
-        if (users) { setUsers(JSON.parse(users)) }
+        if (users) { await setUsers(JSON.parse(users)) }
       } catch (error) {
         setErro(true)
       } finally {

@@ -76,11 +76,24 @@ export const Bio = styled.Text.attrs({ numberOfLines: 2 })`
   text-align: center;
 `;
 
+export const ContainerActions = styled.View`
+   flex-direction: row;
+`;
+
 export const ProfileButton = styled(RectButton)`
+  flex: 1;
   margin: 10px;
-  align-self: stretch;
   border-radius: 4px;
   background: #7159c1;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+`;
+
+export const DeleteButton = styled(RectButton)`
+  margin-top: 10px;
+  padding: 0 5px;
+  background: transparent;
   justify-content: center;
   align-items: center;
   height: 36px;
