@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import api from '../../services/api';
-import { Container, ContainerLoading, Header, Avatar, Name, Bio, Stars, Starred, OwnerAvatar, Info, Title, Author } from './styles';
+import { Container, ContainerLoading, ContainerEmpty, DataEmpty, Header, Avatar, Name, Bio, Stars, Starred, OwnerAvatar, Info, Title, Author } from './styles';
 
 const User = ({ route, navigation }) => {
 
@@ -9,7 +10,7 @@ const User = ({ route, navigation }) => {
   const [stars, setStars] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  navigation.setOptions({ title: user.name });
+  navigation.setOptions({ title: user.name || 'Usuário Desconhecido' });
 
   useEffect(() => {
     (async () => {
@@ -23,7 +24,7 @@ const User = ({ route, navigation }) => {
     <Container>
       <Header>
         <Avatar source={{ uri: user.avatar }} />
-        <Name>{user.name}</Name>
+        <Name>{user.name || '(Sem Nome)'}</Name>
         <Bio>{user.bio}</Bio>
       </Header>
       {
@@ -32,19 +33,26 @@ const User = ({ route, navigation }) => {
             <ActivityIndicator color="#7159c1" />
           </ContainerLoading>
         ) : (
-            <Stars
-              data={stars}
-              keyExtractor={star => String(star.id)}
-              renderItem={({ item }) => (
-                <Starred>
-                  <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-                  <Info>
-                    <Title>{item.name}</Title>
-                    <Author>{item.owner.login}</Author>
-                  </Info>
-                </Starred>
-              )}
-            />
+            (stars.length > 0) ? (
+              <Stars
+                data={stars}
+                keyExtractor={star => String(star.id)}
+                renderItem={({ item }) => (
+                  <Starred>
+                    <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+                    <Info>
+                      <Title>{item.name}</Title>
+                      <Author>{item.owner.login}</Author>
+                    </Info>
+                  </Starred>
+                )}
+              />
+            ) : (
+                <ContainerEmpty>
+                  <Icon name='close' size={40} color='#ccc' />
+                  <DataEmpty>O usuário não possui repositorios favoritos</DataEmpty>
+                </ContainerEmpty>
+              )
           )
       }
     </Container>

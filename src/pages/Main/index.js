@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Keyboard, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Container, Form, FieldsForm, Input, SubmitButton, Erro, List, User, Avatar, Name, Bio, ContainerActions, DeleteButton, ProfileButton, ProfileButtonText } from './styles';
+import {
+  Container, ContainerEmpty, Form, FieldsForm, Input, SubmitButton, Erro, List, User, Avatar,
+  Name, Bio, ContainerActions, DeleteButton, ProfileButton, ProfileButtonText, DataEmpty
+} from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import api from '../../services/api';
 
@@ -10,12 +13,16 @@ const Main = ({ navigation, usersRegistered }) => {
   const [newUser, setNewUSer] = useState('')
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
-  const [erro, setErro] = useState(false)
+  const [erro, setErro] = useState('')
 
   useEffect(() => setUsers(usersRegistered), [])
   useEffect(() => { AsyncStorage.setItem('users', JSON.stringify(users)) }, [users])
 
   const handleAddUser = async () => {
+    if (!newUser.length) return
+    if (users.filter(user => user.login === newUser).length) {
+      return setErro('O usuário informado já está cadastrado')
+    }
     try {
       setLoading(true);
       const response = await api.get(`/users/${newUser}`);
@@ -27,7 +34,7 @@ const Main = ({ navigation, usersRegistered }) => {
       }
       setUsers([...users, data]);
     } catch (error) {
-      setErro(true)
+      setErro('O usuário informado não foi encontrado')
     } finally {
       setNewUSer('');
       setLoading(false);
@@ -47,10 +54,10 @@ const Main = ({ navigation, usersRegistered }) => {
             autoCapitalize='none'
             placeholder='Adicionar Usuário'
             value={newUser}
-            onChangeText={text => { setNewUSer(text); setErro(false) }}
+            onChangeText={text => { setNewUSer(text); setErro('') }}
             returnKeyType='send'
             onSubmitEditing={handleAddUser}
-            erro={erro}
+            erro={erro.length > 0}
           />
           <SubmitButton loading={loading} onPress={handleAddUser}>
             {
@@ -63,28 +70,37 @@ const Main = ({ navigation, usersRegistered }) => {
           </SubmitButton>
         </FieldsForm>
         {
-          erro && <Erro>O usuário informado não foi encontrado</Erro>
+          (erro.length > 0) && <Erro>{erro}</Erro>
         }
       </Form>
-      <List
-        data={users}
-        keyExtractor={user => user.login}
-        renderItem={({ item }) => (
-          <User>
-            <Avatar source={{ uri: item.avatar }} />
-            <Name>{item.name}</Name>
-            <Bio>{item.bio}</Bio>
-            <ContainerActions>
-              <DeleteButton onPress={() => handleDeleteUser(item)}>
-                <Icon name='delete' size={20} color='#999' />
-              </DeleteButton>
-              <ProfileButton onPress={() => handleViewUser(item)}>
-                <ProfileButtonText>Ver Perfil</ProfileButtonText>
-              </ProfileButton>
-            </ContainerActions>
-          </User>
-        )}
-      />
+      {
+        (!usersRegistered.length && !users.length) ? (
+          <ContainerEmpty>
+            <Icon name='close' size={40} color='#ccc' />
+            <DataEmpty>Não há devs cadastrados</DataEmpty>
+          </ContainerEmpty>
+        ) : (
+            <List
+              data={users}
+              keyExtractor={user => user.login}
+              renderItem={({ item }) => (
+                <User>
+                  <Avatar source={{ uri: item.avatar }} />
+                  <Name>{item.name || '(Sem Nome)'}</Name>
+                  <Bio>{item.bio}</Bio>
+                  <ContainerActions>
+                    <DeleteButton onPress={() => handleDeleteUser(item)}>
+                      <Icon name='delete' size={20} color='#999' />
+                    </DeleteButton>
+                    <ProfileButton onPress={() => handleViewUser(item)}>
+                      <ProfileButtonText>Ver Perfil</ProfileButtonText>
+                    </ProfileButton>
+                  </ContainerActions>
+                </User>
+              )}
+            />
+          )
+      }
     </Container>
   )
 }

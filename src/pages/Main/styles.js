@@ -6,6 +6,20 @@ export const Container = styled.View`
   padding: 20px;
 `;
 
+export const ContainerEmpty = styled.View`
+  flex: 1;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DataEmpty = styled.Text`
+  font-size: 16px;
+  color: #bbb;
+  font-weight: bold;
+  text-align: center;
+`;
+
 export const Form = styled.View`
   flex-direction: column;
   padding-bottom: 10px;

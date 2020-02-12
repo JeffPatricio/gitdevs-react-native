@@ -11,6 +11,20 @@ export const ContainerLoading = styled.View`
   justify-content: center;
 `;
 
+export const ContainerEmpty = styled.View`
+  flex: 1;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DataEmpty = styled.Text`
+  font-size: 16px;
+  color: #bbb;
+  font-weight: bold;
+  text-align: center;
+`;
+
 export const Header = styled.View`
   align-items: center;
   padding-bottom: 20px;
